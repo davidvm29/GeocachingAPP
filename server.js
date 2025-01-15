@@ -6,6 +6,7 @@ const session = require('express-session');
 const authRoutes = require('./routes/authRoutes');
 const gameRoutes = require('./routes/gameRoutes');
 require('./config/passport')(passport);
+require('dotenv').config();
 
 const app = express();
 
