@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supervisar Juego - <%= game.name %></title>
-    <script async
-    src="https://maps.googleapis.com/maps/api/js?key=<%=googleMapsApiKey
-    %>&callback=initMap">
-</script>
+    <title>Supervise game - <%= game.name %></title>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&map_ids=<%= googleMapsId %>&callback=initMap&libraries=places,marker&loading=async"></script>
     <style>
         #map {
             height: 400px;
@@ -16,9 +13,14 @@
     </style>
 </head>
 <body>
-    <h1>Supervisando: <%= game.name %></h1>
+    <h1>Supervising: <%= game.name %></h1>
     <div id="map"></div>
-    <h2>Participantes</h2>
+    <h2>Game information</h2>
+    <p><b>Status:</b> <%= game.isActive ? 'Active' : 'Ended' %></p>
+    <% if (game.winner) { %>
+        <p><b>Winner:</b> <%= game.winner %></p>
+    <% } %>
+    <h2>Participants</h2>
     <ul>
         <% game.participants.forEach(participant => { %>
             <li><%= participant.displayName %></li>
@@ -30,13 +32,17 @@
             <li>
                 <b>Pista:</b> <%= cache.hint %> 
                 <% if (cache.foundBy.length > 0) { %>
-                    - Encontrado por: <%= cache.foundBy.map(user => user.displayName).join(', ') %>
+                    - Found by: <%= cache.foundBy %>
                 <% } else { %>
-                    - No encontrado
+                    - Not found
                 <% } %>
             </li>
         <% }); %>
     </ul>
+
+    <form action="/game/<%= game._id %>/reset" method="POST">
+        <button type="submit">Reinitialize game</button>
+    </form>
 
     <script>
         function initMap() {
@@ -44,13 +50,19 @@
             const map = new google.maps.Map(document.getElementById("map"), {
                 center: areaCenter,
                 zoom: 14,
+                mapId: "<%= googleMapsId %>"
             });
-
+            
             <% game.caches.forEach(cache => { %>
-                new google.maps.Marker({
+                new google.maps.marker.AdvancedMarkerElement({
                     position: { lat: <%= cache.location.lat %>, lng: <%= cache.location.lng %> },
                     map: map,
                     title: "<%= cache.hint %>",
+                    content: new google.maps.marker.PinElement({
+                        borderColor: "green",
+                        background: "green",
+                        glyphColor: "white",
+                    }).element
                 });
             <% }); %>
         }
