@@ -1,46 +1,81 @@
-<h1>Create a New Game</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a New Game</title>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&map_ids=<%= googleMapsId %>&callback=initMap&libraries=places,marker&loading=async"></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<h1>Create a new game</h1>
 <form action="/game/create" method="POST">
-    <label for="name">Game Name:</label>
+    <label for="name">Game name:</label>
     <input type="text" id="name" name="name" required>
 
-    <label for="centerLat">Area Center (Latitude):</label>
+    <label for="centerLat">Area center (Latitude):</label>
     <input type="number" id="centerLat" name="centerLat" step="0.000001" required>
 
-    <label for="centerLng">Area Center (Longitude):</label>
+    <label for="centerLng">Area center (Longitude):</label>
     <input type="number" id="centerLng" name="centerLng" step="0.000001" required>
 
-    <label for="width">Area Width (meters):</label>
+    <label for="width">Area width (meters):</label>
     <input type="number" id="width" name="width" required>
 
-    <label for="height">Area Height (meters):</label>
+    <label for="height">Area height (meters):</label>
     <input type="number" id="height" name="height" required>
+
+    <button type="button" onclick="setArea()">Set area</button>
 
     <div id="map" style="width: 100%; height: 400px;"></div>
 
-    <button type="submit">Create Game</button>
+    <div id="cacheSection" style="display: none;">
+      <h2>Add caches</h2>
+      <label for="numCaches">Number of caches:</label>
+      <input type="number" id="numCaches" name="numCaches" value="0" required>
+
+      <div id="caches">
+          <!-- Add fields for cache locations and hints dynamically using JavaScript -->
+      </div>
+
+      <button type="submit">Create game</button>
+  </div>
+
+    <!-- <button type="submit">Create Game</button> -->
 </form>
 
 <script>
-  async function initMap() {
-    const { Map } = await google.maps.importLibrary("maps");
+  function initMap() {
 
-    const map = new Map(document.getElementById("map"), {
+    const map = new google.maps.Map(document.getElementById("map"), {
       center: { lat: 0, lng: 0 },
       zoom: 2,
+      mapId: "<%= googleMapsId %>"
     });
 
     let marker;
+    const caches = [];
+    const cacheMarkers = [];
 
     map.addListener("click", (e) => {
-      const position = { lat: e.latLng.lat().toFixed(6), lng: e.latLng.lng().toFixed(6) };
+
+      const position = { 
+        lat: parseFloat(e.latLng.lat().toFixed(6)), 
+        lng: parseFloat(e.latLng.lng().toFixed(6)) 
+      };
 
 
       if (marker) {
-        marker.setPosition(position);
+        marker.position = position;
       } else {
-        marker = new google.maps.Marker({
+        marker = new google.maps.marker.AdvancedMarkerElement({
           position,
-          map: map,
+          map: map
         });
       }
 
@@ -48,11 +83,78 @@
       document.getElementById("centerLat").value = position.lat;
       document.getElementById("centerLng").value = position.lng;
     });
+
+    window.setArea = function() {
+      const centerLat = parseFloat(document.getElementById("centerLat").value);
+      const centerLng = parseFloat(document.getElementById("centerLng").value);
+      const width = parseFloat(document.getElementById("width").value);
+      const height = parseFloat(document.getElementById("height").value);
+
+      if (!centerLat || !centerLng || !width || !height) {
+        alert("Please set the area center and dimensions.");
+        return;
+      }
+
+      document.getElementById("cacheSection").style.display = "block";
+
+      map.setCenter({ lat: centerLat, lng: centerLng });
+      map.setZoom(14);
+
+      google.maps.event.clearListeners(map, 'click');
+
+      map.addListener("click", (e) => {
+
+        const numCaches = parseInt(document.getElementById("numCaches").value);
+        if (caches.length >= numCaches) {
+            alert("You have reached the maximum number of caches.");
+            return;
+        }
+
+        const position = { 
+          lat: parseFloat(e.latLng.lat().toFixed(6)), 
+          lng: parseFloat(e.latLng.lng().toFixed(6)) 
+        };
+
+        const pinGreen = new google.maps.marker.PinElement({
+          borderColor: "green",
+          background: "green",
+          glyphColor: "white",
+        });
+
+        const cacheMarker = new google.maps.marker.AdvancedMarkerElement({
+          position,
+          map: map,
+          content: pinGreen.element
+        });
+
+        cacheMarkers.push(cacheMarker);
+
+        const cacheIndex = caches.length;
+        caches.push({ position, hint: '' });
+
+        const cacheElement = document.createElement('div');
+        cacheElement.innerHTML = `
+          <label for="cacheHint${cacheIndex}">Cache ${cacheIndex + 1} Hint:</label>
+          <input type="text" id="cacheHint${cacheIndex}" name="caches[${cacheIndex}][hint]" required>
+          <input type="hidden" name="caches[${cacheIndex}][lat]" value="${position.lat}">
+          <input type="hidden" name="caches[${cacheIndex}][lng]" value="${position.lng}">
+        `;
+        document.getElementById('caches').appendChild(cacheElement);
+      });
+    };
+
+    document.getElementById("numCaches").addEventListener("change", function() {
+      caches.length = 0; // Reset the caches array
+      document.getElementById("caches").innerHTML = ""; // Clear the cache elements
+      cacheMarkers.forEach(marker => marker.map = null); // Remove cache markers from the map
+      cacheMarkers.length = 0; // Reset the cache markers array
+    });
+
   }
 
-  initMap();
+  // initMap();
 </script>
-<script async
-    src="https://maps.googleapis.com/maps/api/js?key=<%=googleMapsApiKey
-    %>&callback=initMap">
-</script>
+<!-- <script async src="https://maps.googleapis.com/maps/api/js?key=<%=googleMapsApiKey %>&callback=initMap"></script> -->
+<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap&libraries=places&loading=async"></script> -->
+</body>
+</html>
