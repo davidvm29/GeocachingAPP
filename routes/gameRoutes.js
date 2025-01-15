@@ -3,12 +3,15 @@ const Game = require('../models/Game');
 const router = express.Router();
 
 // Mostrar lista de juegos
-// Mostrar lista de juegos
 router.get('/list', async (req, res) => {
     try {
         const activeGames = await Game.find({ isActive: true }).populate('organizer');
         const completedGames = await Game.find({ isActive: false }).populate('organizer');
-        res.render('gameList', { activeGames, completedGames, user: req.user });
+        res.render('gameList', {
+            activeGames,
+            completedGames,
+            user: req.user
+        });
     } catch (err) {
         res.status(500).send('Error al obtener la lista de juegos');
     }
@@ -19,7 +22,8 @@ router.get('/list', async (req, res) => {
 router.get('/create', (req, res) => {
     res.render('createGame', {
         user: req.user,
-        googleMapsApiKey: 'AIzaSyDc44uWej_tPpBppTy5D3tJr4tyqPDZTl4', // Pasa la clave desde el servidor
+        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+        googleMapsId: process.env.GOOGLE_MAPS_ID
     });
 });
 
@@ -27,7 +31,7 @@ router.get('/create', (req, res) => {
 // Ruta para crear juegos
 router.post('/create', async (req, res) => {
     try {
-        const { name, centerLat, centerLng, width, height } = req.body;
+        const { name, centerLat, centerLng, width, height, caches } = req.body;
 
         // Valida los campos requeridos
         if (!name || !centerLat || !centerLng || !width || !height) {
@@ -40,7 +44,12 @@ router.post('/create', async (req, res) => {
                 center: { lat: parseFloat(centerLat), lng: parseFloat(centerLng) },
                 dimensions: { width: parseInt(width), height: parseInt(height) },
             },
-            organizer: req.user._id, // Asegúrate de que req.user esté disponible
+            caches: caches.map(cache => ({
+                location: { lat: parseFloat(cache.lat), lng: parseFloat(cache.lng) },
+                hint: cache.hint,
+                foundBy: []
+            })),
+            organizer: req.user._id,
         });
 
         await newGame.save();
@@ -51,6 +60,19 @@ router.post('/create', async (req, res) => {
     }
 });
 
+// Ver datos de un juego para participar
+router.get('/:id/view', async (req, res) => {
+    try {
+        const game = await Game.findById(req.params.id).populate('organizer');
+        if (!game) return res.status(404).send('Juego no encontrado');
+        res.render('joinGame', {
+            game,
+            user: req.user
+        });
+    } catch (err) {
+        res.status(500).send('Error al cargar el juego');
+    }
+});
 
 // Participar en un juego
 router.post('/:id/join', async (req, res) => {
@@ -61,11 +83,12 @@ router.post('/:id/join', async (req, res) => {
             game.participants.push(req.user._id);
             await game.save();
         }
-        res.redirect(`/game/${req.params.id}`);
+        res.redirect(`/game/${req.params.id}/play`);
     } catch (err) {
         res.status(500).send('Error al unirse al juego');
     }
 });
+
 
 router.get('/:id/supervise', async (req, res) => {
     try {
@@ -74,8 +97,9 @@ router.get('/:id/supervise', async (req, res) => {
 
         res.render('superviseGame', { 
             game, 
-            user: req.user, 
-            googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY // Asegúrate de que esté definido en .env
+            user: req.user,
+            googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+            googleMapsId: process.env.GOOGLE_MAPS_ID
         });
     } catch (err) {
         res.status(500).send('Error al supervisar el juego');
@@ -89,7 +113,12 @@ router.get('/:id/play', async (req, res) => {
         const game = await Game.findById(req.params.id).populate('caches.foundBy');
         if (!game) return res.status(404).send('Juego no encontrado');
 
-        res.render('playGame', { game, user: req.user });
+        res.render('playGame', {
+            game,
+            user: req.user,
+            googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+            googleMapsId: process.env.GOOGLE_MAPS_ID
+        });
     } catch (err) {
         res.status(500).send('Error al cargar el juego');
     }
@@ -99,7 +128,10 @@ router.get('/:id/play', async (req, res) => {
 router.get('/supervise', async (req, res) => {
     try {
         const games = await Game.find({ organizer: req.user._id });
-        res.render('superviseList', { games, user: req.user });
+        res.render('superviseList', {
+            games,
+            user: req.user
+        });
     } catch (err) {
         res.status(500).send('Error al cargar los juegos organizados');
     }
@@ -107,3 +139,42 @@ router.get('/supervise', async (req, res) => {
 
 
 module.exports = router;
+
+// Reinicializar el juego
+router.post('/:id/reset', async (req, res) => {
+    try {
+        const game = await Game.findById(req.params.id);
+        if (!game) return res.status(404).send('Juego no encontrado');
+
+        // Reinicializar los datos del juego
+        game.caches.forEach(cache => {
+            cache.foundBy = [];
+        });
+        game.isActive = true;
+        game.winner = null;
+
+        await game.save();
+        res.redirect(`/game/${req.params.id}/supervise`);
+    } catch (err) {
+        res.status(500).send('Error al reinicializar el juego');
+    }
+});
+
+router.post('/:gameId/cache/:cacheId/found', async (req, res) => {
+    try {
+        const game = await Game.findById(req.params.gameId);
+        if (!game) return res.status(404).send('Juego no encontrado');
+
+        const cache = game.caches.id(req.params.cacheId);
+        if (!cache) return res.status(404).send('Tesoro no encontrado');
+
+        if (!cache.foundBy.includes(req.user._id)) {
+            cache.foundBy.push(req.user._id);
+            await game.save();
+        }
+
+        res.redirect(`/game/${req.params.gameId}/play`);
+    } catch (err) {
+        res.status(500).send('Error al encontrar el tesoro');
+    }
+});
