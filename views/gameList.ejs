@@ -6,14 +6,22 @@
     <title>Lista de Juegos</title>
 </head>
 <body>
-    <h1>Juegos Activos</h1>
+    <h1>Active games</h1>
     <ul>
         <% activeGames.forEach(game => { %>
-            <li><%= game.name %> - Organizado por: <%= game.organizer.displayName %></li>
+            <li>
+                <%= game.name %> - Organizado por: <%= game.organizer.displayName %>
+                <% if (!game.participants.includes(user._id)) { %>
+                    <a href="/game/<%= game._id %>/view">Participate</a>
+                <% } else { %>
+                    <!-- - You are already participating -->
+                    <a href="/game/<%= game._id %>/play">Play</a>
+                <% } %>
+            </li>
         <% }) %>
     </ul>
 
-    <h1>Juegos Finalizados</h1>
+    <h1>Completed games</h1>
     <ul>
         <% completedGames.forEach(game => { %>
             <li><%= game.name %> - Ganador: <%= game.winner %></li>
