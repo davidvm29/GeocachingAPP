@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jugar - <%= game.name %></title>
-    <script async src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&map_ids=<%= googleMapsId %>&callback=initMap&libraries=places,marker&loading=async"></script>
     <style>
         #map {
             height: 400px;
@@ -13,18 +13,19 @@
     </style>
 </head>
 <body>
-    <h1>Jugando: <%= game.name %></h1>
+    <h1>Playing: <%= game.name %></h1>
     <div id="map"></div>
-    <h2>Caches Disponibles</h2>
+    <h2>Available caches</h2>
     <ul>
         <% game.caches.forEach(cache => { %>
             <li>
-                <b>Pista:</b> <%= cache.hint %>
-                <% if (cache.foundBy.some(user => user._id.equals(user._id))) { %>
-                    - Ya encontrado
+                <b>Hint:</b> <%= cache.hint %>
+                <% if (cache.foundBy.includes(user._id)) { %>
+                    - Already found
                 <% } else { %>
                     <form action="/game/<%= game._id %>/cache/<%= cache._id %>/found" method="POST">
-                        <button type="submit">Marcar como encontrado</button>
+                        <input type="file" name="proof" accept="image/*" required>
+                        <button type="submit">Mark as found</button>
                     </form>
                 <% } %>
             </li>
@@ -32,21 +33,30 @@
     </ul>
 
     <script>
-        function initMap() {
+        async function initMap() {
             const areaCenter = { lat: <%= game.area.center.lat %>, lng: <%= game.area.center.lng %> };
             const map = new google.maps.Map(document.getElementById("map"), {
                 center: areaCenter,
                 zoom: 14,
+                mapId: "<%= googleMapsId %>"
             });
 
             <% game.caches.forEach(cache => { %>
-                new google.maps.Marker({
-                    position: { lat: <%= cache.location.lat %>, lng: <%= cache.location.lng %> },
-                    map: map,
-                    title: "<%= cache.hint %>",
-                });
+                <% if (cache.foundBy.includes(user._id)) { %>
+                    new google.maps.marker.AdvancedMarkerElement({
+                        position: { lat: <%= cache.location.lat %>, lng: <%= cache.location.lng %> },
+                        map: map,
+                        title: "<%= cache.hint %>",
+                        content: new google.maps.marker.PinElement({
+                            borderColor: "green",
+                            background: "green",
+                            glyphColor: "white",
+                        }).element
+                    });
+                <% } %>
             <% }); %>
         }
     </script>
+    <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap&libraries=places&loading=async"></script> -->
 </body>
 </html>
