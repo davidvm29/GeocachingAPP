@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unirse a - <%= game.name %></title>
+</head>
+<body>
+    <h1>Unirse a: <%= game.name %></h1>
+    <p><b>Organizador:</b> <%= game.organizer.displayName %></p>
+    <p><b>Descripción del Área:</b> Centro en (<%= game.area.center.lat %>, <%= game.area.center.lng %>)</p>
+    <form action="/game/<%= game._id %>/join" method="POST">
+        <button type="submit">Unirse al Juego</button>
+    </form>
+</body>
+</html>

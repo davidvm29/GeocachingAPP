@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jugar - <%= game.name %></title>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap"></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jugando: <%= game.name %></h1>
+    <div id="map"></div>
+    <h2>Caches Disponibles</h2>
+    <ul>
+        <% game.caches.forEach(cache => { %>
+            <li>
+                <b>Pista:</b> <%= cache.hint %>
+                <% if (cache.foundBy.some(user => user._id.equals(user._id))) { %>
+                    - Ya encontrado
+                <% } else { %>
+                    <form action="/game/<%= game._id %>/cache/<%= cache._id %>/found" method="POST">
+                        <button type="submit">Marcar como encontrado</button>
+                    </form>
+                <% } %>
+            </li>
+        <% }); %>
+    </ul>
+
+    <script>
+        function initMap() {
+            const areaCenter = { lat: <%= game.area.center.lat %>, lng: <%= game.area.center.lng %> };
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: areaCenter,
+                zoom: 14,
+            });
+
+            <% game.caches.forEach(cache => { %>
+                new google.maps.Marker({
+                    position: { lat: <%= cache.location.lat %>, lng: <%= cache.location.lng %> },
+                    map: map,
+                    title: "<%= cache.hint %>",
+                });
+            <% }); %>
+        }
+    </script>
+</body>
+</html>
