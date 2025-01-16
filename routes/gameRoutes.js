@@ -173,6 +173,14 @@ router.post('/:gameId/cache/:cacheId/found', async (req, res) => {
             await game.save();
         }
 
+        // Verificar si el usuario ha encontrado todos los caches
+        const allCachesFound = game.caches.every(cache => cache.foundBy.includes(req.user._id));
+        if (allCachesFound) {
+            game.winner = req.user._id;
+            game.isActive = false;
+            await game.save();
+        }
+
         res.redirect(`/game/${req.params.gameId}/play`);
     } catch (err) {
         res.status(500).send('Error al encontrar el tesoro');
