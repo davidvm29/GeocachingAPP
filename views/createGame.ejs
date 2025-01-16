@@ -10,10 +10,62 @@
             height: 400px;
             width: 100%;
         }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            background-color: #333333;
+            overflow: hidden;
+        }
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar li {
+            float: left;
+        }
+        .navbar li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        .navbar li a:hover, .navbar li a.active {
+            background-color: #ddd;
+            color: black;
+        }
+        .navbar .right {
+            float: right;
+        }
+        .welcome-message {
+            color: white;
+            padding: 14px 20px;
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
-<h1>Create a new game</h1>
+  <nav class="navbar">
+    <ul>
+        <li><div class="welcome-message">
+            Hello, <%= user.displayName %>!
+        </div></li>
+        <!-- Enlace para ver la lista de juegos -->
+        <li><a href="/game/list">View games</a></li>
+
+        <!-- Enlace para crear un nuevo juego -->
+        <li><a href="/game/create" class="active">Create a new game</a></li>
+
+        <!-- Enlace para supervisar los juegos organizados por el usuario -->
+        <li><a href="/game/supervise">My games</a></li>
+
+        <!-- Enlace para cerrar sesión -->
+        <li class="right"><a href="/auth/logout">Logout</a></li>
+    </ul>
+</nav>
+<!-- <h1>Create a new game</h1> -->
 <form action="/game/create" method="POST">
     <label for="name">Game name:</label>
     <input type="text" id="name" name="name" required>
