@@ -1,89 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de juegos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .navbar {
-            background-color: #333333;
-            overflow: hidden;
-        }
-        .navbar ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar li {
-            float: left;
-        }
-        .navbar li a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-        }
-        .navbar li a:hover, .navbar li a.active {
-            background-color: #ddd;
-            color: black;
-        }
-        .navbar .right {
-            float: right;
-        }
-        .welcome-message {
-            color: white;
-            padding: 14px 20px;
-            font-size: 1.2em;
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar">
-        <ul>
-            <li><div class="welcome-message">
-                Hello, <%= user.displayName %>!
-            </div></li>
-            <!-- Enlace para ver la lista de juegos -->
-            <li><a href="/game/list" class="active">View games</a></li>
+<h1>Active games</h1>
+<ul>
+  <% activeGames.forEach(game => { %> <% if (game.organizer) { %>
+  <li>
+    <%= game.name %> - Organized by: <%= game.organizer.displayName %> <% if
+    (!game.participants.includes(user._id)) { %>
+    <a href="/game/<%= game._id %>/view">Participate</a>
+    <% } else { %>
+    <!-- - You are already participating -->
+    <a href="/game/<%= game._id %>/play">Play</a>
+    <% } %>
+  </li>
+  <% } %> <% }) %>
+</ul>
 
-            <!-- Enlace para crear un nuevo juego -->
-            <li><a href="/game/create">Create a new game</a></li>
-
-            <!-- Enlace para supervisar los juegos organizados por el usuario -->
-            <li><a href="/game/supervise">My games</a></li>
-
-            <!-- Enlace para cerrar sesión -->
-            <li class="right"><a href="/auth/logout">Logout</a></li>
-        </ul>
-    </nav>
-    <h1>Active games</h1>
-    <ul>
-        <% activeGames.forEach(game => { %>
-            <% if (game.organizer) { %>
-            <li>
-                <%= game.name %> - Organized by: <%= game.organizer.displayName %>
-                <% if (!game.participants.includes(user._id)) { %>
-                    <a href="/game/<%= game._id %>/view">Participate</a>
-                <% } else { %>
-                    <!-- - You are already participating -->
-                    <a href="/game/<%= game._id %>/play">Play</a>
-                <% } %>
-            </li>
-            <% } %>
-        <% }) %>
-    </ul>
-
-    <h1>Completed games</h1>
-    <ul>
-        <% completedGames.forEach(game => { %>
-            <li>
-                <%= game.name %> - Organized by: <%= game.organizer.displayName %> - Winner: <%= game.winner.displayName %>
-            </li>
-        <% }) %>
-    </ul>
-</body>
-</html>
+<h1>Completed games</h1>
+<ul>
+  <% completedGames.forEach(game => { %>
+  <li>
+    <%= game.name %> - Organized by: <%= game.organizer.displayName %> - Winner:
+    <%= game.winner.displayName %>
+  </li>
+  <% }) %>
+</ul>

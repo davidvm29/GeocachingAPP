@@ -1,115 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jugar - <%= game.name %></title>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&map_ids=<%= googleMapsId %>&callback=initMap&libraries=places,marker&loading=async"></script>
-    <style>
-        #map {
-            height: 400px;
-            width: 100%;
-        }
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .navbar {
-            background-color: #333333;
-            overflow: hidden;
-        }
-        .navbar ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar li {
-            float: left;
-        }
-        .navbar li a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-        }
-        .navbar li a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-        .navbar .right {
-            float: right;
-        }
-        .welcome-message {
-            color: white;
-            padding: 14px 20px;
-            font-size: 1.2em;
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar">
-        <ul>
-            <li><div class="welcome-message">
-                Hello, <%= user.displayName %>!
-            </div></li>
-            <!-- Enlace para ver la lista de juegos -->
-            <li><a href="/game/list">View games</a></li>
+<h1>Playing: <%= game.name %></h1>
+<div id="map" style="width: 100%; height: 400px"></div>
+<h2>Available caches</h2>
+<ul>
+  <% game.caches.forEach((cache, index) => { %>
+  <li>
+    <h2>Cache <%= index + 1 %></h2>
+    <b>Hint:</b> <%= cache.hint %> <% if (cache.foundBy.includes(user._id)) { %>
+    - Already found <% } else { %>
+    <form
+      action="/game/<%= game._id %>/cache/<%= cache._id %>/found"
+      method="POST"
+    >
+      <input type="file" name="proof" accept="image/*" required />
+      <button type="submit">Mark as found</button>
+    </form>
+    <% } %>
+  </li>
+  <% }); %>
+</ul>
 
-            <!-- Enlace para crear un nuevo juego -->
-            <li><a href="/game/create">Create a new game</a></li>
+<script>
+  async function initMap() {
+      const areaCenter = { lat: <%= game.area.center.lat %>, lng: <%= game.area.center.lng %> };
+      const map = new google.maps.Map(document.getElementById("map"), {
+          center: areaCenter,
+          zoom: 14,
+          mapId: "<%= googleMapsId %>"
+      });
 
-            <!-- Enlace para supervisar los juegos organizados por el usuario -->
-            <li><a href="/game/supervise">My games</a></li>
-
-            <!-- Enlace para cerrar sesión -->
-            <li class="right"><a href="/auth/logout">Logout</a></li>
-        </ul>
-    </nav>
-    <h1>Playing: <%= game.name %></h1>
-    <div id="map"></div>
-    <h2>Available caches</h2>
-    <ul>
-        <% game.caches.forEach((cache, index) => { %>
-            <li>
-                <h2>Cache <%= index + 1 %></h2>
-                <b>Hint:</b> <%= cache.hint %>
-                <% if (cache.foundBy.includes(user._id)) { %>
-                    - Already found
-                <% } else { %>
-                    <form action="/game/<%= game._id %>/cache/<%= cache._id %>/found" method="POST">
-                        <input type="file" name="proof" accept="image/*" required>
-                        <button type="submit">Mark as found</button>
-                    </form>
-                <% } %>
-            </li>
-        <% }); %>
-    </ul>
-
-    <script>
-        async function initMap() {
-            const areaCenter = { lat: <%= game.area.center.lat %>, lng: <%= game.area.center.lng %> };
-            const map = new google.maps.Map(document.getElementById("map"), {
-                center: areaCenter,
-                zoom: 14,
-                mapId: "<%= googleMapsId %>"
-            });
-
-            <% game.caches.forEach(cache => { %>
-                <% if (cache.foundBy.includes(user._id)) { %>
-                    new google.maps.marker.AdvancedMarkerElement({
-                        position: { lat: <%= cache.location.lat %>, lng: <%= cache.location.lng %> },
-                        map: map,
-                        title: "<%= cache.hint %>",
-                        content: new google.maps.marker.PinElement({
-                            borderColor: "green",
-                            background: "green",
-                            glyphColor: "white",
-                        }).element
-                    });
-                <% } %>
-            <% }); %>
-        }
-    </script>
-    <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap&libraries=places&loading=async"></script> -->
-</body>
-</html>
+      <% game.caches.forEach(cache => { %>
+          <% if (cache.foundBy.includes(user._id)) { %>
+              new google.maps.marker.AdvancedMarkerElement({
+                  position: { lat: <%= cache.location.lat %>, lng: <%= cache.location.lng %> },
+                  map: map,
+                  title: "<%= cache.hint %>",
+                  content: new google.maps.marker.PinElement({
+                      borderColor: "green",
+                      background: "green",
+                      glyphColor: "white",
+                  }).element
+              });
+          <% } %>
+      <% }); %>
+  }
+</script>
+<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap&libraries=places&loading=async"></script> -->

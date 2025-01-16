@@ -1,126 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supervise game - <%= game.name %></title>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&map_ids=<%= googleMapsId %>&callback=initMap&libraries=places,marker&loading=async"></script>
-    <style>
-        #map {
-            height: 400px;
-            width: 100%;
-        }
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .navbar {
-            background-color: #333333;
-            overflow: hidden;
-        }
-        .navbar ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar li {
-            float: left;
-        }
-        .navbar li a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-        }
-        .navbar li a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-        .navbar .right {
-            float: right;
-        }
-        .welcome-message {
-            color: white;
-            padding: 14px 20px;
-            font-size: 1.2em;
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar">
-        <ul>
-            <li><div class="welcome-message">
-                Hello, <%= user.displayName %>!
-            </div></li>
-            <!-- Enlace para ver la lista de juegos -->
-            <li><a href="/game/list">View games</a></li>
+<h1>Supervising: <%= game.name %></h1>
+<div id="map" style="width: 100%; height: 400px"></div>
+<h2>Game information</h2>
+<p><b>Status:</b> <%= game.isActive ? 'Active' : 'Completed' %></p>
+<% if (game.winner) { %>
+<p><b>Winner:</b> <%= game.winner.displayName %></p>
+<% } %>
+<h2>Participants</h2>
+<ul>
+  <% game.participants.forEach(participant => { %>
+  <li><%= participant.displayName %></li>
+  <% }); %>
+</ul>
+<h2>Caches</h2>
+<ul>
+  <% game.caches.forEach(cache => { %>
+  <li>
+    <b>Pista:</b> <%= cache.hint %> <% if (cache.foundBy.length > 0) { %> -
+    Found by: <% cache.foundBy.forEach(user => { %> <%= user.displayName %> <%
+    }); %> <% } else { %> - Not found <% } %>
+  </li>
+  <% }); %>
+</ul>
 
-            <!-- Enlace para crear un nuevo juego -->
-            <li><a href="/game/create">Create a new game</a></li>
+<form action="/game/<%= game._id %>/reset" method="POST">
+  <button type="submit">Reset game</button>
+</form>
 
-            <!-- Enlace para supervisar los juegos organizados por el usuario -->
-            <li><a href="/game/supervise">My games</a></li>
+<script>
+  function initMap() {
+      const areaCenter = { lat: <%= game.area.center.lat %>, lng: <%= game.area.center.lng %> };
+      const map = new google.maps.Map(document.getElementById("map"), {
+          center: areaCenter,
+          zoom: 14,
+          mapId: "<%= googleMapsId %>"
+      });
 
-            <!-- Enlace para cerrar sesión -->
-            <li class="right"><a href="/auth/logout">Logout</a></li>
-        </ul>
-    </nav>
-    <h1>Supervising: <%= game.name %></h1>
-    <div id="map"></div>
-    <h2>Game information</h2>
-    <p><b>Status:</b> <%= game.isActive ? 'Active' : 'Completed' %></p>
-    <% if (game.winner) { %>
-        <p><b>Winner:</b> <%= game.winner.displayName %></p>
-    <% } %>
-    <h2>Participants</h2>
-    <ul>
-        <% game.participants.forEach(participant => { %>
-            <li><%= participant.displayName %></li>
-        <% }); %>
-    </ul>
-    <h2>Caches</h2>
-    <ul>
-        <% game.caches.forEach(cache => { %>
-            <li>
-                <b>Pista:</b> <%= cache.hint %> 
-                <% if (cache.foundBy.length > 0) { %>
-                    - Found by:
-                    <% cache.foundBy.forEach(user => { %>
-                        <%= user.displayName %>
-                    <% }); %>
-                <% } else { %>
-                    - Not found
-                <% } %>
-            </li>
-        <% }); %>
-    </ul>
-
-    <form action="/game/<%= game._id %>/reset" method="POST">
-        <button type="submit">Reset game</button>
-    </form>
-
-    <script>
-        function initMap() {
-            const areaCenter = { lat: <%= game.area.center.lat %>, lng: <%= game.area.center.lng %> };
-            const map = new google.maps.Map(document.getElementById("map"), {
-                center: areaCenter,
-                zoom: 14,
-                mapId: "<%= googleMapsId %>"
-            });
-            
-            <% game.caches.forEach(cache => { %>
-                new google.maps.marker.AdvancedMarkerElement({
-                    position: { lat: <%= cache.location.lat %>, lng: <%= cache.location.lng %> },
-                    map: map,
-                    title: "<%= cache.hint %>",
-                    content: new google.maps.marker.PinElement({
-                        borderColor: "green",
-                        background: "green",
-                        glyphColor: "white",
-                    }).element
-                });
-            <% }); %>
-        }
-    </script>
-</body>
-</html>
+      <% game.caches.forEach(cache => { %>
+          new google.maps.marker.AdvancedMarkerElement({
+              position: { lat: <%= cache.location.lat %>, lng: <%= cache.location.lng %> },
+              map: map,
+              title: "<%= cache.hint %>",
+              content: new google.maps.marker.PinElement({
+                  borderColor: "green",
+                  background: "green",
+                  glyphColor: "white",
+              }).element
+          });
+      <% }); %>
+  }
+</script>

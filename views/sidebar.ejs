@@ -1,0 +1,82 @@
+<ul
+  class="nav nav-pills nav-flush flex-column mb-auto text-center"
+  style="width: 4.5rem"
+>
+  <li class="nav-item">
+    <a
+      href="/game/list"
+      class="nav-link py-3 border-bottom rounded-0 <%= activeRoute === 'gameList' ? 'text-bg-dark' : 'text-dark' %>"
+      aria-current="page"
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      aria-label="Ver juegos"
+      data-bs-original-title="Ver juegos"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        fill="currentColor"
+        class="bi bi-map"
+        viewBox="0 0 16 16"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M15.817.113A.5.5 0 0 1 16 .5v14a.5.5 0 0 1-.402.49l-5 1a.5.5 0 0 1-.196 0L5.5 15.01l-4.902.98A.5.5 0 0 1 0 15.5v-14a.5.5 0 0 1 .402-.49l5-1a.5.5 0 0 1 .196 0L10.5.99l4.902-.98a.5.5 0 0 1 .415.103M10 1.91l-4-.8v12.98l4 .8zm1 12.98 4-.8V1.11l-4 .8zm-6-.8V1.11l-4 .8v12.98z"
+        />
+      </svg>
+    </a>
+  </li>
+  <li>
+    <a
+      href="/game/create"
+      class="nav-link py-3 border-bottom rounded-0 <%= activeRoute === 'createGame' ? 'text-bg-dark' : 'text-dark' %>"
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      aria-label="Crear juegos"
+      data-bs-original-title="Crear juegos"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        fill="currentColor"
+        class="bi bi-bookmark-plus"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"
+        />
+        <path
+          d="M8 4a.5.5 0 0 1 .5.5V6H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V7H6a.5.5 0 0 1 0-1h1.5V4.5A.5.5 0 0 1 8 4"
+        />
+      </svg>
+    </a>
+  </li>
+  <li>
+    <a
+      href="/game/supervise"
+      class="nav-link py-3 border-bottom rounded-0 <%= activeRoute === 'superviseList' ? 'text-bg-dark' : 'text-dark' %>"
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      aria-label="Mis juegos"
+      data-bs-original-title="Mis juegos"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        fill="currentColor"
+        class="bi bi-geo-alt"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"
+        />
+        <path
+          d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"
+        />
+      </svg>
+    </a>
+  </li>
+</ul>

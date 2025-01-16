@@ -1,71 +1,146 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geocaching App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .navbar {
-            background-color: #333333;
-            overflow: hidden;
-        }
-        .navbar ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar li {
-            float: left;
-        }
-        .navbar li a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-        }
-        .navbar li a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-        .navbar .right {
-            float: right;
-        }
-        .welcome-message {
-            color: white;
-            padding: 14px 20px;
-            font-size: 1.2em;
-        }
-    </style>
-</head>
-<body>
+<style>
+  .feature-icon {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 0.75rem;
+  }
+</style>
+<div class="mt-4">
+  <div class="text-center">
+    <h2>Bienvenido a Geocaching App!</h2>
     <% if (user) { %>
-        <nav class="navbar">
-            <ul>
-                <li><div class="welcome-message">
-                    Hello, <%= user.displayName %>!
-                </div></li>
-                <!-- Enlace para ver la lista de juegos -->
-                <li><a href="/game/list">View games</a></li>
-
-                <!-- Enlace para crear un nuevo juego -->
-                <li><a href="/game/create">Create a new game</a></li>
-
-                <!-- Enlace para supervisar los juegos organizados por el usuario -->
-                <li><a href="/game/supervise">My games</a></li>
-
-                <!-- Enlace para cerrar sesión -->
-                <li class="right"><a href="/auth/logout">Logout</a></li>
-            </ul>
-        </nav>
+    <p>Hola, <%= user.displayName %>!</p>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+      <div class="feature col">
+        <div
+          class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            fill="currentColor"
+            class="bi bi-map"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M15.817.113A.5.5 0 0 1 16 .5v14a.5.5 0 0 1-.402.49l-5 1a.5.5 0 0 1-.196 0L5.5 15.01l-4.902.98A.5.5 0 0 1 0 15.5v-14a.5.5 0 0 1 .402-.49l5-1a.5.5 0 0 1 .196 0L10.5.99l4.902-.98a.5.5 0 0 1 .415.103M10 1.91l-4-.8v12.98l4 .8zm1 12.98 4-.8V1.11l-4 .8zm-6-.8V1.11l-4 .8v12.98z"
+            />
+          </svg>
+        </div>
+        <h3 class="fs-2 text-body-emphasis">Juegos</h3>
+        <p>
+          Lista de juegos disponibles. Los usuarios pueden decidir participar en
+          cualquiera de las cazas que estén activas en un momento dado, con lo
+          que tendrán acceso a un mapa del área de juego así como a las pistas
+          para encontrar los correspondientes tesoros.
+        </p>
+        <a href="/game/list" class="icon-link">
+          Ver más
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-caret-right"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M6 12.796V3.204L11.481 8zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753"
+            />
+          </svg>
+        </a>
+      </div>
+      <div class="feature col">
+        <div
+          class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            fill="currentColor"
+            class="bi bi-bookmark-plus"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"
+            />
+            <path
+              d="M8 4a.5.5 0 0 1 .5.5V6H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V7H6a.5.5 0 0 1 0-1h1.5V4.5A.5.5 0 0 1 8 4"
+            />
+          </svg>
+        </div>
+        <h3 class="fs-2 text-body-emphasis">Crear Juegos</h3>
+        <p>
+          Los usuarios podrán crear nuevas instancias de juegos, definiendo el
+          área de juego (rectangular, identificada por las coordenadas GPS de su
+          centro y sus dimensiones), el número de caches a encontrar, su
+          localización, y la pista que lleve a cada uno de ellos
+        </p>
+        <a href="/game/create" class="icon-link">
+          Ver más
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-caret-right"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M6 12.796V3.204L11.481 8zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753"
+            />
+          </svg>
+        </a>
+      </div>
+      <div class="feature col">
+        <div
+          class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            fill="currentColor"
+            class="bi bi-geo-alt"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"
+            />
+            <path
+              d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"
+            />
+          </svg>
+        </div>
+        <h3 class="fs-2 text-body-emphasis">Mis Juegos</h3>
+        <p>
+          El organizador de un juego podrá supervisar el estado del mismo,
+          visualizando en un mapa el área de juego con la localización de los
+          distintos caches, junto con la relación de participantes que
+          encontrado cada uno de ellos, y el estado del juego
+        </p>
+        <a href="/game/supervise" class="icon-link">
+          Ver más
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-caret-right"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M6 12.796V3.204L11.481 8zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753"
+            />
+          </svg>
+        </a>
+      </div>
+    </div>
     <% } else { %>
-        <h1>Welcome to Geocaching App</h1>
-        <p>You need to log in to access the app.</p>
-        <!-- Enlace para iniciar sesión con Google -->
-        <a href="/auth/google">Login with Google</a>
+    <img src="/images/maps.svg" width="400" />
     <% } %>
-</body>
-</html>
+  </div>
+</div>
