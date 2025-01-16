@@ -32,7 +32,7 @@
             <li>
                 <b>Pista:</b> <%= cache.hint %> 
                 <% if (cache.foundBy.length > 0) { %>
-                    - Found by: <%= cache.foundBy %>
+                    - Found by user with ID: <%= cache.foundBy %>
                 <% } else { %>
                     - Not found
                 <% } %>
@@ -41,7 +41,7 @@
     </ul>
 
     <form action="/game/<%= game._id %>/reset" method="POST">
-        <button type="submit">Reinitialize game</button>
+        <button type="submit">Reset game</button>
     </form>
 
     <script>

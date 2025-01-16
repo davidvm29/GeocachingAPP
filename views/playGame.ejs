@@ -17,8 +17,9 @@
     <div id="map"></div>
     <h2>Available caches</h2>
     <ul>
-        <% game.caches.forEach(cache => { %>
+        <% game.caches.forEach((cache, index) => { %>
             <li>
+                <h2>Cache <%= index + 1 %></h2>
                 <b>Hint:</b> <%= cache.hint %>
                 <% if (cache.foundBy.includes(user._id)) { %>
                     - Already found
