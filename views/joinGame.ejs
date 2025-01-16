@@ -4,8 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join - <%= game.name %></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            background-color: #333333;
+            overflow: hidden;
+        }
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar li {
+            float: left;
+        }
+        .navbar li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        .navbar li a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .navbar .right {
+            float: right;
+        }
+        .welcome-message {
+            color: white;
+            padding: 14px 20px;
+            font-size: 1.2em;
+        }
+    </style>
 </head>
 <body>
+    <nav class="navbar">
+        <ul>
+            <li><div class="welcome-message">
+                Hello, <%= user.displayName %>!
+            </div></li>
+            <!-- Enlace para ver la lista de juegos -->
+            <li><a href="/game/list">View games</a></li>
+
+            <!-- Enlace para crear un nuevo juego -->
+            <li><a href="/game/create">Create a new game</a></li>
+
+            <!-- Enlace para supervisar los juegos organizados por el usuario -->
+            <li><a href="/game/supervise">My games</a></li>
+
+            <!-- Enlace para cerrar sesión -->
+            <li class="right"><a href="/auth/logout">Logout</a></li>
+        </ul>
+    </nav>
     <h1>Join: <%= game.name %></h1>
     <p><b>Organizer:</b> <%= game.organizer.displayName %></p>
     <p><b>Area description:</b> Centre at (<%= game.area.center.lat %>, <%= game.area.center.lng %>)</p>
