@@ -10,15 +10,67 @@
             height: 400px;
             width: 100%;
         }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            background-color: #333333;
+            overflow: hidden;
+        }
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar li {
+            float: left;
+        }
+        .navbar li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        .navbar li a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .navbar .right {
+            float: right;
+        }
+        .welcome-message {
+            color: white;
+            padding: 14px 20px;
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <ul>
+            <li><div class="welcome-message">
+                Hello, <%= user.displayName %>!
+            </div></li>
+            <!-- Enlace para ver la lista de juegos -->
+            <li><a href="/game/list">View games</a></li>
+
+            <!-- Enlace para crear un nuevo juego -->
+            <li><a href="/game/create">Create a new game</a></li>
+
+            <!-- Enlace para supervisar los juegos organizados por el usuario -->
+            <li><a href="/game/supervise">My games</a></li>
+
+            <!-- Enlace para cerrar sesión -->
+            <li class="right"><a href="/auth/logout">Logout</a></li>
+        </ul>
+    </nav>
     <h1>Supervising: <%= game.name %></h1>
     <div id="map"></div>
     <h2>Game information</h2>
-    <p><b>Status:</b> <%= game.isActive ? 'Active' : 'Ended' %></p>
+    <p><b>Status:</b> <%= game.isActive ? 'Active' : 'Completed' %></p>
     <% if (game.winner) { %>
-        <p><b>Winner:</b> <%= game.winner %></p>
+        <p><b>Winner:</b> <%= game.winner.displayName %></p>
     <% } %>
     <h2>Participants</h2>
     <ul>
@@ -32,7 +84,10 @@
             <li>
                 <b>Pista:</b> <%= cache.hint %> 
                 <% if (cache.foundBy.length > 0) { %>
-                    - Found by user with ID: <%= cache.foundBy %>
+                    - Found by:
+                    <% cache.foundBy.forEach(user => { %>
+                        <%= user.displayName %>
+                    <% }); %>
                 <% } else { %>
                     - Not found
                 <% } %>

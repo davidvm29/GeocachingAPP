@@ -5,8 +5,14 @@ const router = express.Router();
 // Mostrar lista de juegos
 router.get('/list', async (req, res) => {
     try {
-        const activeGames = await Game.find({ isActive: true }).populate('organizer');
-        const completedGames = await Game.find({ isActive: false }).populate('organizer');
+        const activeGames = await Game.find({ isActive: true })
+        .populate('organizer');
+        const completedGames = await Game.find({ isActive: false })
+        .populate('organizer')
+        .populate({
+            path: 'winner',
+            model: 'User'
+        });
         res.render('gameList', {
             activeGames,
             completedGames,
@@ -92,7 +98,16 @@ router.post('/:id/join', async (req, res) => {
 
 router.get('/:id/supervise', async (req, res) => {
     try {
-        const game = await Game.findById(req.params.id).populate('organizer participants caches.foundBy');
+        const game = await Game.findById(req.params.id)
+        .populate('participants')
+            .populate({
+                path: 'caches.foundBy',
+                model: 'User'
+            })
+            .populate({
+                path: 'winner',
+                model: 'User'
+            });
         if (!game) return res.status(404).send('Juego no encontrado');
 
         res.render('superviseGame', { 
