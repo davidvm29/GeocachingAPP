@@ -1,24 +1,60 @@
-<h1>Active games</h1>
-<ul>
-  <% activeGames.forEach(game => { %> <% if (game.organizer) { %>
-  <li>
-    <%= game.name %> - Organized by: <%= game.organizer.displayName %> <% if
-    (!game.participants.includes(user._id)) { %>
-    <a href="/game/<%= game._id %>/view">Participate</a>
-    <% } else { %>
-    <!-- - You are already participating -->
-    <a href="/game/<%= game._id %>/play">Play</a>
-    <% } %>
-  </li>
-  <% } %> <% }) %>
-</ul>
+<div
+  class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+>
+  <h1>Lista de Juegos</h1>
+</div>
 
-<h1>Completed games</h1>
-<ul>
-  <% completedGames.forEach(game => { %>
-  <li>
-    <%= game.name %> - Organized by: <%= game.organizer.displayName %> - Winner:
-    <%= game.winner.displayName %>
-  </li>
-  <% }) %>
-</ul>
+<h2>Juegos Activos</h2>
+<div class="list-group">
+  <% activeGames.forEach(game => { %> <% if (game.organizer) { %>
+  <div class="list-group-item list-group-item-action d-flex gap-3 py-3">
+    <img
+      src="/images/icon-geocaching.png"
+      alt="twbs"
+      width="40"
+      height="40"
+      class="rounded-circle flex-shrink-0"
+    />
+    <div class="d-flex gap-2 w-100 justify-content-between">
+      <div>
+        <h6 class="mb-0"><%= game.name %></h6>
+        <p class="mb-0 opacity-75">
+          Organizado por: <%= game.organizer.displayName %>
+        </p>
+      </div>
+      <small class="text-nowrap">
+        <% if (!game.participants.includes(user._id)) { %>
+        <a href="/game/<%= game._id %>/view">Unirse</a>
+        <% } else { %>
+        <!-- - You are already participating -->
+        <a href="/game/<%= game._id %>/play">Play</a>
+        <% } %></small
+      >
+    </div>
+  </div>
+  <% } %> <% }) %>
+</div>
+
+<h2 class="mt-4">Juegos Completados</h2>
+<div class="list-group">
+  <% completedGames.forEach(game => { %> <% if (game.organizer) { %>
+  <div class="list-group-item list-group-item-action d-flex gap-3 py-3">
+    <img
+      src="/images/icon-geocaching-completed.png"
+      alt="twbs"
+      width="40"
+      height="40"
+      class="rounded-circle flex-shrink-0"
+    />
+    <div class="d-flex gap-2 w-100 justify-content-between">
+      <div>
+        <h6 class="mb-0"><%= game.name %></h6>
+        <p class="mb-0 opacity-75">
+          Organizado por: <%= game.organizer.displayName %>
+        </p>
+        <p class="mb-0 opacity-75">Ganador: <%= game.winner.displayName %></p>
+      </div>
+    </div>
+  </div>
+  <% } %> <% }) %>
+</div>

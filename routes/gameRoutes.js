@@ -128,7 +128,7 @@ router.get("/:id/supervise", async (req, res) => {
       googleMapsId: process.env.GOOGLE_MAPS_ID,
       isNotIndex: true,
       includeGoogleApi: true,
-      activeRoute: "gameList",
+      activeRoute: "superviseList",
     });
   } catch (err) {
     res.status(500).send("Error al supervisar el juego");

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Geocaching App</title>
+    <link rel="icon" type="image/x-icon" href="/images/geocaching_logo.png" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -41,9 +42,6 @@
           </a>
 
           <div class="text-end">
-            <!-- <button type="button" class="btn btn-outline-light me-2">
-              Login with Google
-            </button> -->
             <% if (user) { %>
             <div class="flex-shrink-0 dropdown">
               <a
@@ -81,8 +79,9 @@
       </div>
     </header>
     <div class="d-flex">
-      <% if (user && isNotIndex) { %> <%- include('sidebar') %> <% } %>
-      <main class="container"><%- include(view, { user }) %></main>
+      <% if (user && isNotIndex) { %> <%- include('sidebar', { activeRoute }) %>
+      <% } %>
+      <main class="container mt-4"><%- include(view, { user }) %></main>
     </div>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

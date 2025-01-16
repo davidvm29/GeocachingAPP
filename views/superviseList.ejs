@@ -1,8 +1,27 @@
-<!-- <h1>Your games</h1> -->
-<ul>
-  <% games.forEach(game => { %>
-  <li>
-    <a href="/game/<%= game._id %>/supervise">Supervise <%= game.name %></a>
-  </li>
-  <% }); %>
-</ul>
+<div
+  class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+>
+  <h1>Mis Juegos</h1>
+</div>
+
+<div class="list-group">
+  <% games.forEach(game => { %> <% if (game.organizer) { %>
+  <div class="list-group-item list-group-item-action d-flex gap-3 py-3">
+    <img
+      src="/images/icon-geocaching.png"
+      alt="twbs"
+      width="40"
+      height="40"
+      class="rounded-circle flex-shrink-0"
+    />
+    <div class="d-flex gap-2 w-100 justify-content-between">
+      <div>
+        <h6 class="mb-0"><%= game.name %></h6>
+      </div>
+      <small class="text-nowrap">
+        <a href="/game/<%= game._id %>/supervise">Supervisar</a>
+      </small>
+    </div>
+  </div>
+  <% } %> <% }) %>
+</div>
