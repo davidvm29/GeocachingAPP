@@ -1,10 +1,10 @@
 <div
   class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
 >
-  <h1>Lista de Juegos</h1>
+  <h1>Lista de juegos</h1>
 </div>
 
-<h2>Juegos Activos</h2>
+<h2>Juegos activos</h2>
 <div class="list-group">
   <% activeGames.forEach(game => { %> <% if (game.organizer) { %>
   <div class="list-group-item list-group-item-action d-flex gap-3 py-3">
@@ -27,7 +27,7 @@
         <a href="/game/<%= game._id %>/view">Unirse</a>
         <% } else { %>
         <!-- - You are already participating -->
-        <a href="/game/<%= game._id %>/play">Play</a>
+        <a href="/game/<%= game._id %>/play">Jugar</a>
         <% } %></small
       >
     </div>
@@ -35,7 +35,7 @@
   <% } %> <% }) %>
 </div>
 
-<h2 class="mt-4">Juegos Completados</h2>
+<h2 class="mt-4">Juegos completados</h2>
 <div class="list-group">
   <% completedGames.forEach(game => { %> <% if (game.organizer) { %>
   <div class="list-group-item list-group-item-action d-flex gap-3 py-3">
