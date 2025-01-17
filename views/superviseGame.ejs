@@ -1,11 +1,11 @@
 <div
   class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
 >
-  <h1>Gestionar: <%= game.name %></h1>
+  <h1>Supervisar: <%= game.name %></h1>
 </div>
 <div class="row g-3 mb-4">
   <div class="col-sm-4 d-flex flex-column gap-3">
-    <h2>Game information</h2>
+    <h2>Información del juego</h2>
     <div class="d-flex align-items-center gap-5">
         <div class="d-flex align-items-center gap-3">
             <svg
@@ -25,9 +25,9 @@
               />
             </svg>
             <div class="d-flex flex-column align-items-start">
-              <p style="margin: 0 !important">Status</p>
+              <p style="margin: 0 !important">Estado</p>
               <h6 class="fw-bold mb-0 text-body-emphasis">
-                <%= game.isActive ? 'Active' : 'Completed' %>
+                <%= game.isActive ? 'Activo' : 'Completado' %>
               </h5>
             </div>
           </div>
@@ -68,7 +68,7 @@
               </svg>
           <div class="d-flex flex-column">
             <h6 class="mb-0">Cache <%= index + 1 %></h6>
-            <p class="mb-0 opacity-75"><b>Hint:</b> <%= cache.hint %></p>
+            <p class="mb-0 opacity-75"><b>Pista:</b> <%= cache.hint %></p>
             <% if (cache.foundBy.length > 0) { %>
                 <p class="text-success mb-0 fw-bold">Encontrado por <% cache.foundBy.forEach(user => { %> <%= user.displayName %> <%
                 }); %> </p> <% } else { %> <p class="text-danger mb-0 fw-bold">No encontrado </p><% } %>
@@ -77,7 +77,7 @@
         <% }) %>
       </div>
       <form action="/game/<%= game._id %>/reset" method="POST">
-        <button type="submit" class="btn btn-danger">Reset game</button>
+        <button type="submit" class="btn btn-danger">Reinicializar juego</button>
       </form>
   </div>
   <div class="col-sm-8">
@@ -93,6 +93,26 @@
           zoom: 14,
           mapId: "<%= googleMapsId %>"
       });
+
+      const bounds = {
+        north: <%= game.area.center.lat %> + (<%= game.area.dimensions.height %> / 111320 / 2),
+        south: <%= game.area.center.lat %> - (<%= game.area.dimensions.height %> / 111320 / 2),
+        east: <%= game.area.center.lng %> + (<%= game.area.dimensions.width %> / (111320 * Math.cos(<%= game.area.center.lat %> * (Math.PI / 180))) / 2),
+        west: <%= game.area.center.lng %> - (<%= game.area.dimensions.width %> / (111320 * Math.cos(<%= game.area.center.lat %> * (Math.PI / 180))) / 2),
+      };
+
+      const rectangle = new google.maps.Rectangle({
+        bounds: bounds,
+        editable: false,
+        draggable: false,
+        clickable: false,
+        strokeColor: '#0000FF', // Color del borde del rectángulo (azul)
+        fillColor: '#ADD8E6', // Color de relleno del rectángulo (azul claro)
+        fillOpacity: 0.35, // Opacidad del relleno
+        map: map
+      });
+
+      map.fitBounds(bounds);
 
       <% game.caches.forEach(cache => { %>
           new google.maps.marker.AdvancedMarkerElement({

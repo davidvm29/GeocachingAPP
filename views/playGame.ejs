@@ -1,7 +1,7 @@
 <div
   class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
 >
-  <h1>Playing: <%= game.name %></h1>
+  <h1>Jugando a: <%= game.name %></h1>
 </div>
 <div class="row g-3 mb-4">
   <div class="col-sm-4 d-flex flex-column gap-3">
@@ -15,11 +15,11 @@
               <i class="bi bi-geo-fill text-primary"></i>
               <h6 class="mb-0">Cache <%= index + 1 %></h6>
             </div>
-            <span><b>Hint:</b> <%= cache.hint %> </span>
+            <span><b>Pista:</b> <%= cache.hint %> </span>
             <% if(cache.foundBy.includes(user._id)) { %>
             <div class="d-flex gap-1 align-items-center text-success fw-bold">
               <i class="bi bi-check-circle-fill"></i>
-              <span>Already found</span>
+              <span>Ya encontrado</span>
             </div>
             <% } else { %>
             <form
@@ -36,7 +36,7 @@
               />
               <!-- <input type="file" name="proof" accept="image/*" required /> -->
               <button class="btn btn-primary" type="submit">
-                Mark as found
+                Marcar como encontrado
               </button>
             </form>
             <% } %>
@@ -59,6 +59,26 @@
           zoom: 14,
           mapId: "<%= googleMapsId %>"
       });
+
+      const bounds = {
+        north: <%= game.area.center.lat %> + (<%= game.area.dimensions.height %> / 111320 / 2),
+        south: <%= game.area.center.lat %> - (<%= game.area.dimensions.height %> / 111320 / 2),
+        east: <%= game.area.center.lng %> + (<%= game.area.dimensions.width %> / (111320 * Math.cos(<%= game.area.center.lat %> * (Math.PI / 180))) / 2),
+        west: <%= game.area.center.lng %> - (<%= game.area.dimensions.width %> / (111320 * Math.cos(<%= game.area.center.lat %> * (Math.PI / 180))) / 2),
+      };
+
+      const rectangle = new google.maps.Rectangle({
+        bounds: bounds,
+        editable: false,
+        draggable: false,
+        clickable: false,
+        strokeColor: '#0000FF', // Color del borde del rectángulo (azul)
+        fillColor: '#ADD8E6', // Color de relleno del rectángulo (azul claro)
+        fillOpacity: 0.35, // Opacidad del relleno
+        map: map
+      });
+
+      map.fitBounds(bounds);
 
       <% game.caches.forEach(cache => { %>
           <% if (cache.foundBy.includes(user._id)) { %>
