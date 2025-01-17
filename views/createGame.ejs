@@ -1,7 +1,7 @@
 <div
   class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
 >
-  <h1>Creación de Juegos</h1>
+  <h1>Creación de juegos</h1>
 </div>
 <form action="/game/create" method="POST">
   <div class="row g-3 mb-4">
@@ -46,7 +46,7 @@
         />
       </div>
       <div class="w-100">
-        <label for="width" class="form-label">Area width (metros)</label>
+        <label for="width" class="form-label">Anchura del área (metros)</label>
         <input
           type="number"
           class="form-control"
@@ -57,7 +57,7 @@
         />
       </div>
       <div class="w-100">
-        <label for="height" class="form-label">Area height (metros)</label>
+        <label for="height" class="form-label">Altura del área (metros)</label>
         <input
           type="number"
           class="form-control"
@@ -89,7 +89,7 @@
             <!-- Add fields for cache locations and hints dynamically using JavaScript -->
           </div>
 
-          <button class="btn btn-primary" type="submit">Create game</button>
+          <button class="btn btn-primary" type="submit">Crear juego</button>
         </div>
       </div>
     </div>
@@ -108,6 +108,7 @@
     });
 
     let marker;
+    let rectangle;
     const caches = [];
     const cacheMarkers = [];
 
@@ -132,6 +133,7 @@
     });
 
     window.setArea = function () {
+    // function setArea() {
       const centerLat = parseFloat(document.getElementById("centerLat").value);
       const centerLng = parseFloat(document.getElementById("centerLng").value);
       const width = parseFloat(document.getElementById("width").value);
@@ -142,10 +144,34 @@
         return;
       }
 
+      const bounds = {
+        north: centerLat + (height / 111320 / 2),
+        south: centerLat - (height / 111320 / 2),
+        east: centerLng + (width / (111320 * Math.cos(centerLat * (Math.PI / 180))) / 2),
+        west: centerLng - (width / (111320 * Math.cos(centerLat * (Math.PI / 180))) / 2),
+      };
+
+      if (rectangle) {
+          rectangle.setMap(null);
+      }
+
+      rectangle = new google.maps.Rectangle({
+        bounds: bounds,
+        editable: false,
+        draggable: false,
+        clickable: false,
+        strokeColor: '#0000FF', // Color del borde del rectángulo (azul)
+        fillColor: '#ADD8E6', // Color de relleno del rectángulo (azul claro)
+        fillOpacity: 0.35, // Opacidad del relleno
+        map: map
+      });
+
+      map.fitBounds(bounds);
+
       document.getElementById("cacheSection").style.display = "block";
 
-      map.setCenter({ lat: centerLat, lng: centerLng });
-      map.setZoom(14);
+      // map.setCenter({ lat: centerLat, lng: centerLng });
+      // map.setZoom(14);
 
       google.maps.event.clearListeners(map, "click");
 
@@ -160,6 +186,16 @@
           lat: parseFloat(e.latLng.lat().toFixed(6)),
           lng: parseFloat(e.latLng.lng().toFixed(6)),
         };
+
+        if (
+            position.lat > bounds.north ||
+            position.lat < bounds.south ||
+            position.lng > bounds.east ||
+            position.lng < bounds.west
+        ) {
+            alert("El cache está fuera del área delimitada.");
+            return;
+          }
 
         const pinGreen = new google.maps.marker.PinElement({
           borderColor: "green",
@@ -207,5 +243,3 @@
 
   // initMap();
 </script>
-<!-- <script async src="https://maps.googleapis.com/maps/api/js?key=<%=googleMapsApiKey %>&callback=initMap"></script> -->
-<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap&libraries=places&loading=async"></script> -->
