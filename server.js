@@ -1,30 +1,41 @@
 const express = require("express");
+require("dotenv").config();
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
 const authRoutes = require("./routes/authRoutes");
 const gameRoutes = require("./routes/gameRoutes");
 const path = require("path");
+const cors = require("cors");
+
 require("./config/passport")(passport);
-require("dotenv").config();
 
 const app = express();
+
+app.use(
+  cors({
+    credentials: true, // Permite el envío de cookies
+  })
+);
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // View engine
 app.set("view engine", "ejs");
-//app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "views"));
 
 // Session
 app.use(
   session({
-    secret: "geocaching-secret",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000, // Duración de la cookie en milisegundos (24 horas)
+    },
   })
 );
 
@@ -33,7 +44,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Database connection
-const mongoURI = "mongodb+srv://david:nube@cluster0.avzx5.mongodb.net/";
+const mongoURI = process.env.MONGO_URI;
 mongoose
   .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB"))
