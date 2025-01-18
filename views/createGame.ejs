@@ -133,7 +133,7 @@
     });
 
     window.setArea = function () {
-    // function setArea() {
+      // function setArea() {
       const centerLat = parseFloat(document.getElementById("centerLat").value);
       const centerLng = parseFloat(document.getElementById("centerLng").value);
       const width = parseFloat(document.getElementById("width").value);
@@ -145,14 +145,18 @@
       }
 
       const bounds = {
-        north: centerLat + (height / 111320 / 2),
-        south: centerLat - (height / 111320 / 2),
-        east: centerLng + (width / (111320 * Math.cos(centerLat * (Math.PI / 180))) / 2),
-        west: centerLng - (width / (111320 * Math.cos(centerLat * (Math.PI / 180))) / 2),
+        north: centerLat + height / 111320 / 2,
+        south: centerLat - height / 111320 / 2,
+        east:
+          centerLng +
+          width / (111320 * Math.cos(centerLat * (Math.PI / 180))) / 2,
+        west:
+          centerLng -
+          width / (111320 * Math.cos(centerLat * (Math.PI / 180))) / 2,
       };
 
       if (rectangle) {
-          rectangle.setMap(null);
+        rectangle.setMap(null);
       }
 
       rectangle = new google.maps.Rectangle({
@@ -160,10 +164,10 @@
         editable: false,
         draggable: false,
         clickable: false,
-        strokeColor: '#0000FF', // Color del borde del rectángulo (azul)
-        fillColor: '#ADD8E6', // Color de relleno del rectángulo (azul claro)
+        strokeColor: "#0000FF", // Color del borde del rectángulo (azul)
+        fillColor: "#ADD8E6", // Color de relleno del rectángulo (azul claro)
         fillOpacity: 0.35, // Opacidad del relleno
-        map: map
+        map: map,
       });
 
       map.fitBounds(bounds);
@@ -188,14 +192,14 @@
         };
 
         if (
-            position.lat > bounds.north ||
-            position.lat < bounds.south ||
-            position.lng > bounds.east ||
-            position.lng < bounds.west
+          position.lat > bounds.north ||
+          position.lat < bounds.south ||
+          position.lng > bounds.east ||
+          position.lng < bounds.west
         ) {
-            alert("El cache está fuera del área delimitada.");
-            return;
-          }
+          alert("El cache está fuera del área delimitada.");
+          return;
+        }
 
         const pinGreen = new google.maps.marker.PinElement({
           borderColor: "green",
@@ -218,7 +222,7 @@
         cacheElement.innerHTML = `
           <label class="form-label" for="cacheHint${cacheIndex}">Cache ${
           cacheIndex + 1
-        } Hint:</label>
+        } Pista:</label>
           <input class="form-control" type="text" id="cacheHint${cacheIndex}" name="caches[${cacheIndex}][hint]" required>
           <input type="hidden" name="caches[${cacheIndex}][lat]" value="${
           position.lat
