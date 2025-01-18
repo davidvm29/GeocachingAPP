@@ -9,7 +9,7 @@ env_variables:
   NODE_ENV: "production"
   GOOGLE_CLIENT_ID: "48478870555-5c5p1pont316bj6phjikngfe99sukv9a.apps.googleusercontent.com"
   GOOGLE_CLIENT_SECRET: "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"
-  MONGO_URI: "mongodb+srv://david:david@cluster0.avzx5.mongodb.net/"
+  MONGO_URI: "mongodb+srv://david:nube@cluster0.avzx5.mongodb.net/"
   SESSION_SECRET: "geocaching-super-secret-session"
   GOOGLE_MAPS_API_KEY: "AIzaSyDc44uWej_tPpBppTy5D3tJr4tyqPDZTl4"
   GOOGLE_MAPS_ID: "2190eaa9b2dc57bb"
